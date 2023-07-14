@@ -38,4 +38,5 @@ func TestConfigFromFile(t *testing.T) {
 	assertEqualSlice(config.ExifAllowedIds, []uint16{0x0112, 274}, t)
 	assertEqualSlice(config.ExifAllowedPaths, []string{"IFD/Orientation"}, t)
 	assertEqual(config.ExifAbortOnError, true, t)
+	assertEqual(config.FileExpiration, true, t)
 }

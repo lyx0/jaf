@@ -1,6 +1,6 @@
-module github.com/leon-richardt/jaf
+module git.sr.ht/~noury/yaf
 
-go 1.19
+go 1.20
 
 require (
 	github.com/dsoprea/go-exif/v3 v3.0.0-20210512043655-120bcdb2a55e
@@ -9,6 +9,8 @@ require (
 	github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20210512210324-29b889a6093d
 	github.com/gabriel-vasile/mimetype v1.4.1
 	github.com/go-errors/errors v1.1.1
+	github.com/julienschmidt/httprouter v1.3.0
+	github.com/leon-richardt/jaf v0.3.1
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
 )
 

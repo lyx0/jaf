@@ -23,6 +23,7 @@ type Config struct {
 	ExifAllowedIds   []uint16
 	ExifAllowedPaths []string
 	ExifAbortOnError bool
+	FileExpiration   bool
 }
 
 func ConfigFromFile(filePath string) (*Config, error) {
@@ -46,6 +47,7 @@ func ConfigFromFile(filePath string) (*Config, error) {
 		ExifAllowedIds:   []uint16{},
 		ExifAllowedPaths: []string{},
 		ExifAbortOnError: true,
+		FileExpiration:   true,
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -143,6 +145,13 @@ func ConfigFromFile(filePath string) (*Config, error) {
 			}
 
 			retval.ExifAbortOnError = parsed
+		case "FileExpiration":
+			parsed, err := strconv.ParseBool(val)
+			if err != nil {
+				return nil, err
+			}
+
+			retval.FileExpiration = parsed
 		default:
 			return nil, errors.Errorf("unexpected config key: \"%s\"", key)
 		}

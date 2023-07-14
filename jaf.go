@@ -4,23 +4,25 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 
+	"git.sr.ht/~noury/yaf/fileexpiration"
+	"github.com/julienschmidt/httprouter"
 	"github.com/leon-richardt/jaf/exifscrubber"
 )
 
-const allowedChars = "0123456789ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz"
-
-var config Config
+const (
+	allowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	maxAge       = time.Hour * 24 * 7 // 7 days
+)
 
 type parameters struct {
 	configFile string
 }
 
 func parseParams() *parameters {
-	configFile := flag.String("configFile", "jaf.conf", "path to config file")
+	configFile := flag.String("configFile", "yaf.conf", "path to config file")
 	flag.Parse()
 
 	retval := &parameters{}
@@ -29,9 +31,6 @@ func parseParams() *parameters {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-	log.SetPrefix("jaf > ")
-
 	params := parseParams()
 
 	// Read config
@@ -39,6 +38,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not parse config file: %s\n", err.Error())
 	}
+	fd := config.FileDir
+	fmt.Println(fd)
 
 	handler := uploadHandler{
 		config: config,
@@ -49,14 +50,19 @@ func main() {
 		handler.exifScrubber = &scrubber
 	}
 
-	// Start server
-	uploadServer := &http.Server{
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		Addr:         fmt.Sprintf(":%d", config.Port),
+	if config.FileExpiration {
+		fmt.Println("FILE EXPIRATION ENABLED")
+		go func() {
+			for {
+				<-time.After(time.Hour * 2)
+				fileexpiration.DeleteExpired(fd, maxAge)
+			}
+		}()
 	}
 
+	router := httprouter.New()
 	log.Printf("starting jaf on port %d\n", config.Port)
-	http.Handle("/upload", &handler)
-	uploadServer.ListenAndServe()
+	router.HandlerFunc(http.MethodPost, "/upload", handler.PostUpload)
+	router.HandlerFunc(http.MethodPost, "/uploadweb", handler.PostUploadRedirect)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", config.Port), router))
 }

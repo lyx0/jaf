@@ -17,9 +17,72 @@ type uploadHandler struct {
 	exifScrubber *exifscrubber.ExifScrubber
 }
 
-func (handler *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (handler *uploadHandler) PostUploadRedirect(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
+	// Limit size to 50Mb
+	r.Body = http.MaxBytesReader(w, r.Body, 50*1024*1024)
+	uploadFile, header, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "could not read uploaded file: "+err.Error(), http.StatusBadRequest)
+		log.Println("    could not read uploaded file: " + err.Error())
+		return
+	}
+
+	fileData, err := io.ReadAll(uploadFile)
+	uploadFile.Close()
+	if err != nil {
+		http.Error(w, "could not read attached file: "+err.Error(), http.StatusInternalServerError)
+		log.Println("    could not read attached file: " + err.Error())
+		return
+	}
+
+	// Scrub EXIF, if requested and detectable by us
+	if handler.config.ScrubExif {
+		scrubbedData, err := handler.exifScrubber.ScrubExif(fileData[:])
+
+		if err == nil {
+			// If scrubbing was successful, update what to write to file
+			fileData = scrubbedData
+		} else {
+			// Unknown file types (not PNG or JPEG) are allowed to contain EXIF, as we don't know
+			// how to handle them. Handling of other errors depends on configuration.
+			if err != exifscrubber.ErrUnknownFileType {
+				if handler.config.ExifAbortOnError {
+					log.Printf("could not scrub EXIF from file, aborting upload: %s", err.Error())
+					http.Error(
+						w,
+						"could not scrub EXIF from file: "+err.Error(),
+						http.StatusInternalServerError,
+					)
+					return
+				}
+
+				// An error occured but we are configured to proceed with the upload anyway
+				log.Printf(
+					"could not scrub EXIF from file but proceeding with upload as configured: %s",
+					err.Error(),
+				)
+			}
+		}
+	}
+
+	link, err := generateLink(handler, fileData[:], header.Filename)
+	if err != nil {
+		http.Error(w, "could not save file: "+err.Error(), http.StatusInternalServerError)
+		log.Println("    could not save file: " + err.Error())
+		return
+	}
+
+	// Implicitly means code 200
+	http.Redirect(w, r, link, http.StatusFound)
+}
+
+func (handler *uploadHandler) PostUpload(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	// Limit size to 50Mb
+	r.Body = http.MaxBytesReader(w, r.Body, 50*1024*1024)
 	uploadFile, header, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "could not read uploaded file: "+err.Error(), http.StatusBadRequest)
