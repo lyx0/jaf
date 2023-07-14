@@ -1,4 +1,4 @@
-module git.sr.ht/~noury/yaf
+module github.com/lyx0/yaf
 
 go 1.20
 

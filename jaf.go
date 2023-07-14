@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"git.sr.ht/~noury/yaf/fileexpiration"
 	"github.com/julienschmidt/httprouter"
 	"github.com/leon-richardt/jaf/exifscrubber"
+	"github.com/lyx0/yaf/fileexpiration"
 )
 
 const (
