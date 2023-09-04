@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+    jaf:
+        image: jaf
+        volumes:
+            - '/path/to/local/filedir:/var/www/yaf'
+            - '/path/to/your/yaf.conf:/app/yaf.conf'
+        ports:
+            - '4712:4711'
+
