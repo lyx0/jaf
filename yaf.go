@@ -61,7 +61,7 @@ func main() {
 	}
 
 	router := httprouter.New()
-	log.Printf("starting jaf on port %d\n", config.Port)
+	log.Printf("starting yaf on port %d\n", config.Port)
 	router.HandlerFunc(http.MethodPost, "/upload", handler.PostUpload)
 	router.HandlerFunc(http.MethodPost, "/uploadweb", handler.PostUploadRedirect)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", config.Port), router))

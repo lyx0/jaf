@@ -10,7 +10,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.1
 	github.com/go-errors/errors v1.1.1
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/leon-richardt/jaf v0.3.1
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
 )
 

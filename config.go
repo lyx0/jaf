@@ -41,7 +41,7 @@ func ConfigFromFile(filePath string) (*Config, error) {
 	retval := &Config{
 		Port:             4711,
 		LinkPrefix:       "https://yaf.example.com/",
-		FileDir:          "/var/www/jaf/",
+		FileDir:          "/var/www/yaf/",
 		LinkLength:       5,
 		ScrubExif:        true,
 		ExifAllowedIds:   []uint16{},
