@@ -1,0 +1,12 @@
+yaf.ee {
+    root * /path/to/yaf/dist/
+    file_server
+}
+
+i.yaf.ee {
+    root * /path/to/filedir/
+    file_server
+
+    reverse_proxy /upload localhost:4711
+    reverse_proxy /uploadweb localhost:4711
+}
