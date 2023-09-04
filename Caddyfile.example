@@ -1,9 +1,4 @@
-yaf.ee {
-    root * /path/to/yaf/dist/
-    file_server
-}
-
-i.yaf.ee {
+yaf.example.com {
     root * /path/to/filedir/
     file_server
 

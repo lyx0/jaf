@@ -12,7 +12,7 @@ Run **tests** (optional):
 go test
 ```
 
-## Installation without docker-compose
+## Manual Installation
 **Clone** the directory:
 ```bash
 git clone https://github.com/lyx0/yaf.git
@@ -89,14 +89,26 @@ The path format is as follows:
 If you use a reverse-proxy to forward requests to jaf, make sure to correctly forward the original request headers.
 For nginx, this is achieved via the `proxy_pass_request_headers on;` option.
 
-If you want to limit access to jaf (e.g. require basic authentication), you will also need to do this via your reverse-proxy.
+If you want to limit access to yaf (e.g. require basic authentication), you will also need to do this via your reverse-proxy.
+
+### caddy
+I provided a `Caddyfile.example` for you that should be pretty self explanatory. Copy the contents to your own `Caddyfile` and be sure to move the contents of the `dist` folder to your file directory so you can enjoy the really pretty high quality frontend page.
+```Caddyfile
+yaf.example.com {
+    root * /path/to/filedir/
+    file_server
+
+    reverse_proxy /upload localhost:4711
+    reverse_proxy /uploadweb localhost:4711
+}
+```
 
 ## Running
 
 ### Manually
 After adjusting the configuration file to your needs, run:
 ```bash
-jaf -configFile example.conf
+yaf -configFile yaf.conf
 ```
 Of course, you can also write a init system script to handle this for you.
 
@@ -119,23 +131,14 @@ make run
 ```
 
 ### Running from Docker
-Running it from the GitHub Container Registry
-```bash
-docker run \
-    -p 4711:4711 \
-    -v /path/to/your/config.conf:/app/jaf.conf \
-    -v /path/to/local/filedir:/var/www/jaf \
-    ghcr.io/leon-richardt/jaf:latest
-```
-
 Building the Docker image and running it locally
 ```bash
-docker build -t jaf .
+docker build -t yaf .
 docker run \
     -p 4711:4711 \
-    -v /path/to/your/config.conf:/app/jaf.conf \
-    -v /path/to/local/filedir:/var/www/jaf \
-    jaf
+    -v /path/to/your/yaf.conf:/app/yaf.conf \
+    -v /path/to/local/filedir:/var/www/yaf \
+    yaf
 ```
 
 Port 4711 is the default port for the server in `example.conf`, if you've changed this in your config you'll need to change this in the `docker run` invocations above too.  
