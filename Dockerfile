@@ -4,7 +4,7 @@ COPY . .
 RUN go build
 
 FROM alpine:latest
-COPY --from=build /app/jaf /app/jaf
+COPY --from=build /app/yaf /app/yaf
 WORKDIR /app
-RUN mkdir -p /var/www/jaf
-CMD ["./jaf"]
+RUN mkdir -p /var/www/yaf
+CMD ["./yaf"]
