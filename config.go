@@ -40,14 +40,14 @@ func ConfigFromFile(filePath string) (*Config, error) {
 
 	retval := &Config{
 		Port:             4711,
-		LinkPrefix:       "https://jaf.example.com/",
+		LinkPrefix:       "https://yaf.example.com/",
 		FileDir:          "/var/www/jaf/",
 		LinkLength:       5,
 		ScrubExif:        true,
 		ExifAllowedIds:   []uint16{},
 		ExifAllowedPaths: []string{},
 		ExifAbortOnError: true,
-		FileExpiration:   true,
+		FileExpiration:   false,
 	}
 
 	scanner := bufio.NewScanner(file)

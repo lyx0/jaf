@@ -31,8 +31,8 @@ func TestConfigFromFile(t *testing.T) {
 	}
 
 	assertEqual(config.Port, 4711, t)
-	assertEqual(config.LinkPrefix, "https://jaf.example.com/", t)
-	assertEqual(config.FileDir, "/var/www/jaf/", t)
+	assertEqual(config.LinkPrefix, "https://yaf.example.com/", t)
+	assertEqual(config.FileDir, "/var/www/yaf/", t)
 	assertEqual(config.LinkLength, 5, t)
 	assertEqual(config.ScrubExif, true, t)
 	assertEqualSlice(config.ExifAllowedIds, []uint16{0x0112, 274}, t)

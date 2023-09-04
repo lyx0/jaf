@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/leon-richardt/jaf/exifscrubber"
+	"github.com/lyx0/yaf/exifscrubber"
 	"github.com/lyx0/yaf/fileexpiration"
 )
 

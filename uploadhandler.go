@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/leon-richardt/jaf/exifscrubber"
-	"github.com/leon-richardt/jaf/extdetect"
+	"github.com/lyx0/yaf/exifscrubber"
+	"github.com/lyx0/yaf/extdetect"
 )
 
 type uploadHandler struct {
