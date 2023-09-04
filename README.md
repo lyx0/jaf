@@ -2,10 +2,20 @@
 jaf is a simple Go program to handle file uploads.
 If you also want to serve the uploaded files, consider a web server like [nginx](https://nginx.org/en/).
 
-## Installation
+## Installation with docker-compose and local build
 **Clone** the directory:
 ```bash
-git clone https://github.com/leon-richardt/jaf.git
+git clone https://github.com/lyx0/yaf.git
+```
+Run **tests** (optional):
+```bash
+go test
+```
+
+## Installation without docker-compose
+**Clone** the directory:
+```bash
+git clone https://github.com/lyx0/yaf.git
 ```
 **Build** the executable:
 ```bash
@@ -16,23 +26,24 @@ Run **tests** (optional):
 go test
 ```
 
-If you plan on using a systemd service or another init system, you might want to move the `jaf` executable to a different directory (e.g. `/opt`) at this point; you know your setup best.
+If you plan on using a systemd service or another init system, you might want to move the `yaf` executable to a different directory (e.g. `/opt`) at this point; you know your setup best.
 
 ## Configuration
-### jaf
+### yaf
 There are just a few parameters that need to be configured for jaf.
 Refer to the `example.conf` file:
 ```
 Port:       4711
 # a comment
-LinkPrefix: https://jaf.example.com/
-FileDir:    /var/www/jaf/
+LinkPrefix: https://yaf.example.com/
+FileDir:    /var/www/yaf/
 LinkLength: 5
 ScrubExif: true
 # Both IDs also refer to the "Orientation" tag, included for illustrative purposes only
 ExifAllowedIds: 0x0112 274
 ExifAllowedPaths: IFD/Orientation
 ExifAbortOnError: true
+FileExpiration: false
 ```
 
 Option             | Use
@@ -45,9 +56,10 @@ Option             | Use
 `ExifAllowedIds`   | a space-separated list of EXIF tag IDs that should be preserved through EXIF scrubbing (only relevant if `ScrubExif` is `true`)
 `ExifAllowedPaths` | a space-separated list of EXIF tag paths that should be preserved through EXIF scrubbing (only relevant if `ScrubExif` is `true`)
 `ExifAbortOnError` | whether to abort JPEG and PNG uploads if an error occurs during EXIF scrubbing (only relevant if `ScrubExif` is `true`)
+`FileExpiration`   | whether to automatically remove files after a given time or not (`true` or `false`)
 
 
-Make sure the user running jaf has suitable permissions to read, and write to, `FileDir`.
+Make sure the user running yaf has suitable permissions to read, and write to, `FileDir`.
 Also note that `LinkLength` directly relates to the number of files that can be saved.
 Since jaf only uses alphanumeric characters for file name generation, a maximum of `(26 + 26 + 10)^LinkLength` names can be generated.
 
@@ -80,17 +92,37 @@ For nginx, this is achieved via the `proxy_pass_request_headers on;` option.
 If you want to limit access to jaf (e.g. require basic authentication), you will also need to do this via your reverse-proxy.
 
 ## Running
+
+### Manually
 After adjusting the configuration file to your needs, run:
 ```bash
 jaf -configFile example.conf
 ```
 Of course, you can also write a init system script to handle this for you.
 
+### Running from docker-compose
+**Copy** configuration file and fill it in:
+```bash
+cp example.conf yaf.conf
+```
+**Configure** the `docker-compose.yml` volume paths:
+```bash
+vim docker-compose.yml
+```
+**Build** the local docker file:
+```bash
+make build
+```
+**Run** the local docker file with docker-compose:
+```bash
+make run
+```
+
 ### Running from Docker
 Running it from the GitHub Container Registry
 ```bash
 docker run \
-    -p 4712:4711 \
+    -p 4711:4711 \
     -v /path/to/your/config.conf:/app/jaf.conf \
     -v /path/to/local/filedir:/var/www/jaf \
     ghcr.io/leon-richardt/jaf:latest
@@ -100,21 +132,21 @@ Building the Docker image and running it locally
 ```bash
 docker build -t jaf .
 docker run \
-    -p 4712:4711 \
+    -p 4711:4711 \
     -v /path/to/your/config.conf:/app/jaf.conf \
     -v /path/to/local/filedir:/var/www/jaf \
     jaf
 ```
 
 Port 4711 is the default port for the server in `example.conf`, if you've changed this in your config you'll need to change this in the `docker run` invocations above too.  
-The above runs forwards the jaf port from 4711 in the container to 4712 on your local system.
+The above runs forwards the jaf port from 4711 in the container to 4711 on your local system.
 
 ## Usage
 You can use jaf with any application that can send POST requests (e.g. ShareX/ShareNix or just `curl`).
 Make sure the file you want to upload is attached as a `multipart/form-data` field named `file`.
 In `curl`, a request to upload the file `/home/alice/foo.txt` could look like this:
 ```bash
-curl -L -F "file=@/home/alice/foo.txt" jaf.example.com/upload
+curl -L -F "file=@/home/alice/foo.txt" yaf.example.com/upload
 ```
 The response will include a link to the newly uploaded content.
 Note that you may have to add additional header fields to the request, e.g. if you have basic authentication enabled.
