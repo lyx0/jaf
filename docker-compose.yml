@@ -3,8 +3,8 @@ services:
     yaf:
         image: yaf
         volumes:
-          - '/path/to/filedir:/var/www/yaf'
-          - '/path/to/your/yaf.conf:/app/yaf.conf'
+          - /path/to/filedir:/var/www/yaf
+          - /path/to/your/yaf.conf:/app/yaf.conf
         ports:
           - '127.0.0.1:4711:4711'
 
