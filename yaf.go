@@ -61,7 +61,8 @@ func main() {
 	}
 
 	router := httprouter.New()
-	log.Printf("starting yaf on port %d\n", config.Port)
+	log.Printf("starting yaf on port: \t%d\n", config.Port)
+	log.Printf("Maximum File Size:  \t%dMB\n", config.MaxFileSizeMB)
 	router.HandlerFunc(http.MethodPost, "/upload", handler.PostUpload)
 	router.HandlerFunc(http.MethodPost, "/uploadweb", handler.PostUploadRedirect)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", config.Port), router))

@@ -20,8 +20,8 @@ type uploadHandler struct {
 func (handler *uploadHandler) PostUploadRedirect(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	// Limit size to 50Mb
-	r.Body = http.MaxBytesReader(w, r.Body, 50*1024*1024)
+	// Limit size to set value in config
+	r.Body = http.MaxBytesReader(w, r.Body, int64(handler.config.MaxFileSizeMB)*1024*1024)
 	uploadFile, header, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "could not read uploaded file: "+err.Error(), http.StatusBadRequest)
@@ -81,8 +81,8 @@ func (handler *uploadHandler) PostUploadRedirect(w http.ResponseWriter, r *http.
 func (handler *uploadHandler) PostUpload(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	// Limit size to 50Mb
-	r.Body = http.MaxBytesReader(w, r.Body, 50*1024*1024)
+	// Limit size to set value in config
+	r.Body = http.MaxBytesReader(w, r.Body, int64(handler.config.MaxFileSizeMB)*1024*1024)
 	uploadFile, header, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "could not read uploaded file: "+err.Error(), http.StatusBadRequest)

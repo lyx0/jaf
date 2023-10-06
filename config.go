@@ -24,6 +24,7 @@ type Config struct {
 	ExifAllowedPaths []string
 	ExifAbortOnError bool
 	FileExpiration   bool
+	MaxFileSizeMB    int
 }
 
 func ConfigFromFile(filePath string) (*Config, error) {
@@ -48,6 +49,7 @@ func ConfigFromFile(filePath string) (*Config, error) {
 		ExifAllowedPaths: []string{},
 		ExifAbortOnError: true,
 		FileExpiration:   false,
+		MaxFileSizeMB:    50,
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -152,6 +154,13 @@ func ConfigFromFile(filePath string) (*Config, error) {
 			}
 
 			retval.FileExpiration = parsed
+		case "MaxFileSizeMB":
+			parsed, err := strconv.Atoi(val)
+			if err != nil {
+				return nil, err
+			}
+
+			retval.MaxFileSizeMB = parsed
 		default:
 			return nil, errors.Errorf("unexpected config key: \"%s\"", key)
 		}
