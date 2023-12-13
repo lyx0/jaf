@@ -1,4 +1,9 @@
 body {
-  background: #222;
+  background: #222428;
   color: #F2F2F2;
+}
+a {
+  color: ##82a2f2;
+  background-color: transparent;
+  text-decoration: none;
 }
