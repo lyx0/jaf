@@ -5,7 +5,7 @@ If you also want to serve the uploaded files, consider a web server like [nginx]
 ## Installation with docker-compose and local build
 **Clone** the directory:
 ```bash
-git clone https://github.com/lyx0/yaf.git
+git clone https://github.com/nouryxd/yaf.git
 ```
 Run **tests** (optional):
 ```bash
@@ -15,7 +15,7 @@ go test
 ## Manual Installation
 **Clone** the directory:
 ```bash
-git clone https://github.com/lyx0/yaf.git
+git clone https://github.com/nouryxd/yaf.git
 ```
 **Build** the executable:
 ```bash
